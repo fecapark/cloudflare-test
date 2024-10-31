@@ -2,6 +2,11 @@ name: 🚗 [Webview] Build and Deploy
 
 on:
   workflow_call:
+    secrets:
+      CLORUDFLARE_API_TOKEN:
+        required: true
+      CLOUDFLARE_ACCOUNT_ID:
+        required: true
     inputs:
       CLOUDFLARE_PROJECT_NAME:
         type: string
