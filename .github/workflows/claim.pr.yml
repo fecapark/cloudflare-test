@@ -12,7 +12,6 @@ jobs:
       ORG_CLOUDFLARE_API_TOKEN: ${{ secrets.ORG_CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     with:
-      PR_NUMBER: ${{ github.event.number }}
       CLOUDFLARE_PROJECT_NAME: "test-deploy-alpha"
       CLOUDFLARE_BRANCH_TARGET: "develop"
   preview_build:

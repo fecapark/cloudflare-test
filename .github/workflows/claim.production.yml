@@ -14,7 +14,6 @@ jobs:
     with:
       CLOUDFLARE_PROJECT_NAME: "test-deploy"
       CLOUDFLARE_BRANCH_TARGET: "main"
-      PROJECT_TYPE: "claim-web"
 
   release:
     runs-on: ubuntu-latest
