@@ -32,4 +32,4 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     with:
       CLOUDFLARE_PROJECT_NAME: "test-deploy-alpha"
-      CLORUDFLARE_BRANCH_TARGET: "develop"
+      CLOUDFLARE_BRANCH_TARGET: "develop"
