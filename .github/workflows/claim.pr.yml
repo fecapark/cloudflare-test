@@ -1,0 +1,25 @@
+name: 🚗 [Claim] Pull Request actions
+on:
+  pull_request:
+    branches-ignore: [main]
+    types: [labeled, unlabeled, synchronize]
+
+jobs:
+  alpha_build:
+    if: contains(github.event.pull_request.labels.*.name, 'deploy')
+    uses: ./.github/workflows/webview.build_and_deploy.yml
+    secrets:
+      ORG_CLOUDFLARE_API_TOKEN: ${{ secrets.ORG_CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    with:
+      PR_NUMBER: ${{ github.event.number }}
+      CLOUDFLARE_PROJECT_NAME: "test-deploy-alpha"
+      CLOUDFLARE_BRANCH_TARGET: "develop"
+  preview_build:
+    uses: ./.github/workflows/webview.build_and_deploy.yml
+    secrets:
+      ORG_CLOUDFLARE_API_TOKEN: ${{ secrets.ORG_CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    with:
+      CLOUDFLARE_PROJECT_NAME: "test-deploy-alpha"
+      CLOUDFLARE_BRANCH_TARGET: ${{ github.head_ref || github.ref_name }}

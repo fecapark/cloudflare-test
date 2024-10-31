@@ -1,0 +1,35 @@
+name: 🚗 [Claim] Deploy Alpha (develop)
+on:
+  push:
+    branches: [develop]
+  schedule:
+    - cron: "0 0 * * 1-5" # 평일 오전 9시 (UTC 기준)
+jobs:
+  check_for_deploy_label:
+    runs-on: ubuntu-latest
+    outputs:
+      has_deploy_label: ${{ steps.check-labels.outputs.has-deploy-label }}
+    steps:
+      - name: 🥕 Checkout Repository
+        uses: actions/checkout@v4
+      - name: Check for "deploy" label
+        id: check-labels
+        run: |
+          HAS_DEPLOY_LABEL=false
+          PR_LIST=$(gh pr list --json labels)
+          if echo "$PR_LIST" | grep -q "\"name\":\"deploy\""; then
+            HAS_DEPLOY_LABEL=true
+          else
+            HAS_DEPLOY_LABEL=false
+          fi
+          echo "::set-output name=has-deploy-label::${HAS_DEPLOY_LABEL}"
+  build_alpha:
+    needs: check_for_deploy_label
+    if: needs.check_for_deploy_label.outputs.has_deploy_label == 'false'
+    uses: ./.github/workflows/webview.build_and_deploy.yml
+    secrets:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    with:
+      CLOUDFLARE_PROJECT_NAME: "test-deploy-alpha"
+      CLORUDFLARE_BRANCH_TARGET: "develop"
