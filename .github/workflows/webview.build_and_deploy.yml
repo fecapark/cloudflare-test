@@ -18,6 +18,39 @@ env:
   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
 jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Version Name
+        uses: actions/github-script@v6
+        id: version
+        with:
+          result-encoding: string
+          script: |
+            const timeZoneOffset = 9 * 60 * 60 * 1000;
+            const yyyymmddhhmm = new Date(Date.now() + timeZoneOffset).toISOString().replace(/[^0-9]/g, '').slice(0, -5);
+            return yyyymmddhhmm;
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: create tag
+        run: |
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git tag -a -f ${{ steps.version.outputs.result }} -m "Release ${{ steps.version.outputs.result }}"
+          git push -f origin ${{ steps.version.outputs.result }}
+      - name: create release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          tag: ${{ steps.version.outputs.result }}
+          name: "${{ steps.version.outputs.result }} 배포"
+          generateReleaseNotes: true
+          omitBodyDuringUpdate: true
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -53,12 +86,4 @@ jobs:
       - name: 🛫 Build application
         id: build_output
         run: pnpm build
-      - name: 🛫 Deploy to CloudFlare
-        uses: cloudflare/pages-action@1
-        if: ${{ inputs.CLOUDFLARE_BRANCH_TARGET != null }}
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ${{ inputs.CLOUDFLARE_PROJECT_NAME }}
-          directory: dist # e.g. 'dist'
-          branch: ${{ inputs.CLOUDFLARE_BRANCH_TARGET }}
+      -
