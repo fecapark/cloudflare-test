@@ -9,7 +9,7 @@ jobs:
     if: contains(github.event.pull_request.labels.*.name, 'deploy')
     uses: ./.github/workflows/webview.build_and_deploy.yml
     secrets:
-      ORG_CLOUDFLARE_API_TOKEN: ${{ secrets.ORG_CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     with:
       CLOUDFLARE_PROJECT_NAME: "test-deploy-alpha"
@@ -17,7 +17,7 @@ jobs:
   preview_build:
     uses: ./.github/workflows/webview.build_and_deploy.yml
     secrets:
-      ORG_CLOUDFLARE_API_TOKEN: ${{ secrets.ORG_CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     with:
       CLOUDFLARE_PROJECT_NAME: "test-deploy-alpha"
